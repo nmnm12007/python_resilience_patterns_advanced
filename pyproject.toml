@@ -1,0 +1,25 @@
+[project]
+name = "resilience_patterns_observability"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+mypy_path = "src"
+explicit_package_bases = true
+namespace_packages = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "B", "UP"]
+fix = true
+src = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
