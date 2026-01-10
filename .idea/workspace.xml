@@ -4,18 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bba5ca6-6a9a-4ca9-b503-0bc85bbfd7c0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/python_resilience_patterns_advanced.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/interfaces.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/logging.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/metrics.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/tracing.py" afterDir="false" />
+    <list default="true" id="5bba5ca6-6a9a-4ca9-b503-0bc85bbfd7c0" name="Changes" comment="Resilience Pattern Advanced - implementation">
+      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/context.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/inmemory_metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/inmemory_tracing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/runtime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/core/resilience_executor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/core/resilience_executor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/core/timeout_executor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/core/timeout_executor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/tracing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/observability/tracing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/policies/retry_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/policies/retry_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/services/called_downstream_ext_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/services/called_downstream_ext_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_patterns_observability/services/calling_own_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_patterns_observability/services/calling_own_service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +74,6 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.29346.142" />
         <option value="bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142" />
       </set>
     </attachedChunks>
@@ -89,11 +90,28 @@
       <workItem from="1767722598512" duration="562000" />
       <workItem from="1767765684473" duration="106000" />
       <workItem from="1767767061489" duration="5791000" />
-      <workItem from="1767779632359" duration="627000" />
+      <workItem from="1767779632359" duration="2298000" />
+      <workItem from="1767832247628" duration="7479000" />
+      <workItem from="1767874149300" duration="1446000" />
+      <workItem from="1767918070548" duration="20000" />
+      <workItem from="1767918107397" duration="11000" />
     </task>
+    <task id="LOCAL-00001" summary="Resilience Pattern Advanced - implementation">
+      <option name="closed" value="true" />
+      <created>1767780362735</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1767780362735</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Resilience Pattern Advanced - implementation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Resilience Pattern Advanced - implementation" />
   </component>
 </project>

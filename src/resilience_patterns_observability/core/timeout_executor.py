@@ -28,4 +28,4 @@ class TimeoutExecutor:
             return future_1.result(timeout=self.timeout_policy.timeout_seconds)
         except TimeoutError as e:
             future_1.cancel()
-        raise
+        

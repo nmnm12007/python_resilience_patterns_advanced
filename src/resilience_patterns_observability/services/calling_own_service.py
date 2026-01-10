@@ -31,7 +31,7 @@ def call_downstream_service_b() -> Any:
     """
     result = requests.get("http://127.0.0.1:5001/call_downstream", timeout=3)
     result.raise_for_status()
-    return result.json()
+    return result.text
 
 
 @app.route("/api_b")

@@ -13,8 +13,17 @@ from resilience_patterns_observability.core.timeout_executor import TimeoutExecu
 from resilience_patterns_observability.policies.bulkhead_policy import BulkheadPolicy
 from resilience_patterns_observability.policies.cb_policy import CircuitBreakerPolicy
 from resilience_patterns_observability.policies.cb_state import CircuitBreakerState
-from resilience_patterns_observability.policies.retry_policy import RetryPolicy
+from resilience_patterns_observability.policies.retry_policy import \
+    RetryPolicy, before_retry_attempt, after_retry_attempt
 from resilience_patterns_observability.policies.timeout_policy import TimeoutPolicy
+
+from resilience_patterns_observability.observability.context import (
+    current_span, current_trace_id)
+from resilience_patterns_observability.observability.inmemory_tracing import \
+    InMemoryTraceSpan
+from resilience_patterns_observability.observability.runtime import metrics
+import time
+
 
 logger = logging.getLogger(__name__)
 
@@ -46,9 +55,25 @@ class ResilienceExecutor:
         Executes a function with full resilience protections.
         """
         ctx = ExecutionContext()
+        parent_span = current_span.get()
+        trace_id = current_trace_id.get()
+
+        span= InMemoryTraceSpan(name="resilience_executor.execute",
+                                trace_id=trace_id,
+                                parent_span_id = parent_span.span_id if
+                                parent_span else None)
+
+        span_token = current_span.set(span)
+        trace_token = current_trace_id.set(span.trace_id)
+        start_time = time.time()
+        span.start()
+
+        last_exception:Optional[Exception] = None
+
         logger.debug(
-            f"[RE]:[{ctx.timestamp}] Executing {func.__name__} "
-            f"(req_id={ctx.req_id})"
+            f"[ResilienceExecutor]:[{ctx.timestamp}] Executing"
+            f" {func.__name__} "
+            f"(req_id={ctx.req_id}) parent_span={parent_span}, trace_id={trace_id}"
         )
 
         acquired = self.bulkhead.semaphore.acquire(
@@ -67,6 +92,7 @@ class ResilienceExecutor:
                     f"[RE][{ctx.req_id}] Attempt {ctx.attempt}/"
                     f"{self.retry_policy.max_retries}"
                 )
+                retry_span = before_retry_attempt(ctx.attempt)
 
                 try:
                     result = self.timeout_executor.execute(func, *args, **kwargs)
@@ -75,11 +101,31 @@ class ResilienceExecutor:
 
                 except Exception as exc:
                     self._on_failure(ctx, exc)
-
+                    span.record_error(exc)
+                    metrics.inc_counter("request_failure_total", tags={
+                        "exception":type(exc).__name__}, )
+                    last_exception = exc
                     if ctx.attempt >= self.retry_policy.max_retries:
-                        raise
-
+                        break
                     time.sleep(self.retry_policy.delay_seconds)
+
+
+
+                finally:
+                    duration_ms = (time.time() - start_time) * 1000
+                    metrics.observe_latency("request_latency_ms",
+                                            duration_ms,
+                                            tags={"executor":"resilience"},)
+                    after_retry_attempt(retry_span)
+                    if last_exception:
+                        span.record_error(last_exception)
+
+                    span.end()
+                    current_span.reset(span_token)
+                    current_trace_id.reset(trace_token)
+                    
+                if last_exception:
+                    raise last_exception
 
         finally:
             self.bulkhead.semaphore.release()
@@ -116,8 +162,8 @@ class ResilienceExecutor:
 
     def _on_failure(self, ctx: ExecutionContext, exc: Exception) -> None:
         self.cb_state.failure_count += 1
-        self.cb_state.last_failure_time:Optional[float] = time.time()
-        ctx.last_exception:Optional[Exception] = exc
+        self.cb_state.last_failure_time = time.time()
+        ctx.last_exception = exc
 
         logger.error(
             f"[CB][{ctx.req_id}] Attempt {ctx.attempt} failed: {exc}"
@@ -156,164 +202,3 @@ def resilient(
         return wrapper
 
     return decorator
-
-
-
-
-
-
-# """
-# Implements Resilience Executor
-# """
-#
-# import logging
-# import time
-# from functools import wraps
-# from typing import Optional
-#
-# from resilience_patterns_observability.core.bulkhead import Bulkhead
-# from resilience_patterns_observability.core.execution_context import \
-#     ExecutionContext
-# from resilience_patterns_observability.core.timeout_executor import \
-#     TimeoutExecutor
-# from resilience_patterns_observability.policies.bulkhead_policy import \
-#     BulkheadPolicy
-# from resilience_patterns_observability.policies.cb_policy import \
-#     CircuitBreakerPolicy
-# from resilience_patterns_observability.policies.cb_state import \
-#     CircuitBreakerState
-# from resilience_patterns_observability.policies.retry_policy import RetryPolicy
-# from resilience_patterns_observability.policies.timeout_policy import \
-#     TimeoutPolicy
-#
-# logger = logging.getLogger(__name__)
-#
-#
-# class ResilienceExecutor:
-#     """
-#     Implements Resilience Executor policy/state
-#     """
-#
-#     def __init__(self, retry_policy: RetryPolicy,
-#                  cb_policy: CircuitBreakerPolicy,
-#                  bulkhead_policy: BulkheadPolicy,
-#                  timeout_policy: TimeoutPolicy):
-#         self.retry_policy:Optional[RetryPolicy] = retry_policy
-#         self.cb_policy:Optional[CircuitBreakerPolicy] = cb_policy
-#         self.bulkhead_policy:Optional[BulkheadPolicy] = bulkhead_policy
-#         self.timeout_policy:Optional[TimeoutPolicy] = timeout_policy
-#
-#         self.cb_state:Optional[CircuitBreakerState] = CircuitBreakerState()
-#         self.bulkhead:Optional[Bulkhead] = Bulkhead(bulkhead_policy)
-#         self.timeout_executor:Optional[TimeoutExecutor] = TimeoutExecutor(timeout_policy)
-#
-#     def execute(self, func, *args, **kwargs):
-#         """
-#         Implements Resilience Executor Logic
-#         """
-#         ctx = ExecutionContext()
-#         logger.debug(f"[RE]:[{ctx.timestamp}] : Executing {func.__name__}")
-#         # DONT USE THIS :: with self.bulkhead.semaphore.acquire(  # REFER TO
-#         # THE CHAT DISCUSSIONS
-#         acquired = self.bulkhead.semaphore.acquire(
-#             timeout=self.bulkhead.acquire_timeout)
-#         if not acquired:
-#             raise RuntimeError(
-#                 "[BK] : Bulkhead Limit Exceeded, Try again later")
-#         if self._is_circuit_open():
-#             logger.debug("[CB] : Circuit Breaker State is OPEN")
-#             raise RuntimeError("[CB] : Circuit Breaker State is OPEN")
-#         while ctx.attempt < self.retry_policy.max_retries:
-#             ctx.attempt += 1
-#             logger.debug(
-#                 "[CB]: REQUEST:{ctx.req_id} :attempt #: "
-#                 "{ctx.attempt} out of {"
-#                 "self.retry_policy.max_retries}:"
-#                 " at {ctx.timestamp}: is done."
-#             )
-#             try:
-#                 # result = func(*args, **kwargs)
-#                 result = self.timeout_executor.execute(func, *args, **kwargs)
-#                 self._on_success()
-#                 return result
-#             except Exception as e:
-#                 self._on_failure(ctx, e)
-#                 time.sleep(self.retry_policy.delay_seconds)
-#
-#                 if ctx.attempt >= self.retry_policy.max_retries:
-#                     raise
-#
-#             finally:
-#                 self.bulkhead.semaphore.release()
-#
-#         raise RuntimeError("[CB]:Failure with Exception:{e}")
-#
-#     def _is_circuit_open(self):
-#         if self.cb_state.state == "OPEN":
-#             logger.debug(
-#                 "[CB]:Circuit Breaker State is OPEN, Fail-Fast now, "
-#                 "Try again later")
-#             elapsed_time = time.time() - self.cb_state.last_failure_time
-#             if elapsed_time >= self.cb_policy.recovery_timeout:
-#                 self.cb_state.state = "HALF_OPEN"
-#                 logger.debug("[CB]:State Transition :: OPEN -> HALF-OPEN")
-#                 return False
-#             logger.debug("[CB]:Current State : {cb_state.state}")
-#             return True
-#         return False
-#
-#     def _on_success(self) -> None:
-#         logger.debug(
-#             "[CB]: Attempt {ctx.attempt} out of {"
-#             "self.retry_policy.max_retries} is a success."
-#         )
-#         if self.cb_state.state == "HALF_OPEN":
-#             logger.info("[CB] : State Transition :: HALF-OPEN -> CLOSED")
-#         self.cb_state.state = "CLOSED"
-#         self.cb_state.failure_count = 0
-#
-#     def _on_failure(self, ctx, e):
-#         self.cb_state.failure_count += 1
-#         self.cb_state.last_failure_time = ctx.timestamp
-#         ctx.last_exception = e
-#         logger.error(
-#             "[CB]:[{ctx.timestamp}]:Attempt {ctx.attempt} out of {"
-#             "self.retry_policy.max_retries} failed with {ctx.last_exception}."
-#         )
-#         if self.cb_state.failure_count >= self.cb_policy.failure_threshold:
-#             self.cb_state.state = "OPEN"
-#         logging.error(
-#             "[CB]: State Transition :: CLOSED -> OPEN done. Current State : "
-#             "{cb_state.state}"
-#         )
-#
-#
-# def resilient(
-#         retry_policy: RetryPolicy,
-#         cb_policy: CircuitBreakerPolicy,
-#         bulkhead_policy: BulkheadPolicy,
-#         timeout_policy: TimeoutPolicy,
-# ):
-#     """
-#     definition and implementation of Resilience Decorator
-#     """
-#
-#     executor = ResilienceExecutor(retry_policy, cb_policy, bulkhead_policy,
-#                                   timeout_policy)
-#
-#     def decorator(func):
-#         """
-#         Decorator for Resilience Decorator
-#         """
-#
-#         @wraps(func)
-#         def wrapper(*args, **kwargs):
-#             """
-#             Wrapper for Resilience Decorator
-#             """
-#             result = executor.execute(func, *args, **kwargs)
-#             return result
-#
-#         return wrapper
-#
-#     return decorator
