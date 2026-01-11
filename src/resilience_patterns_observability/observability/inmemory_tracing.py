@@ -27,6 +27,7 @@ class InMemoryTraceSpan(TraceSpan):
         self.end_time: float | None = None
         self.annotations: List[Dict[str, Any]] = []
         self.error: str | None = None
+        self.events: List[Dict[str, Any]] = []
 
 
     def start(self) -> None:

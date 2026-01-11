@@ -22,7 +22,7 @@ from resilience_patterns_observability.observability.context import (
 from resilience_patterns_observability.observability.inmemory_tracing import \
     InMemoryTraceSpan
 from resilience_patterns_observability.observability.runtime import metrics
-import time
+
 
 
 logger = logging.getLogger(__name__)
@@ -49,88 +49,85 @@ class ResilienceExecutor:
         self.bulkhead: Bulkhead = Bulkhead(bulkhead_policy)
         self.timeout_executor: TimeoutExecutor = TimeoutExecutor(timeout_policy)
 
-    def execute(self, func: Callable[..., Any], *args:Any, **kwargs:Any) -> (
-            Any):
-        """
-        Executes a function with full resilience protections.
-        """
+    def execute(self, func: Callable[..., Any], *args: Any,
+                **kwargs: Any) -> Any:
         ctx = ExecutionContext()
+
         parent_span = current_span.get()
         trace_id = current_trace_id.get()
 
-        span= InMemoryTraceSpan(name="resilience_executor.execute",
-                                trace_id=trace_id,
-                                parent_span_id = parent_span.span_id if
-                                parent_span else None)
+        root_span = InMemoryTraceSpan(
+            name="resilience_executor.execute",
+            trace_id=trace_id,
+            parent_span_id=parent_span.span_id if parent_span else None,
+        )
 
-        span_token = current_span.set(span)
-        trace_token = current_trace_id.set(span.trace_id)
+        span_token = current_span.set(root_span)
+        trace_token = current_trace_id.set(root_span.trace_id)
+
+        root_span.start()
         start_time = time.time()
-        span.start()
-
-        last_exception:Optional[Exception] = None
-
-        logger.debug(
-            f"[ResilienceExecutor]:[{ctx.timestamp}] Executing"
-            f" {func.__name__} "
-            f"(req_id={ctx.req_id}) parent_span={parent_span}, trace_id={trace_id}"
-        )
-
-        acquired = self.bulkhead.semaphore.acquire(
-            timeout=self.bulkhead.acquire_timeout
-        )
-        if not acquired:
-            raise RuntimeError("[BK] Bulkhead limit exceeded")
 
         try:
-            if self._is_circuit_open():
-                raise RuntimeError("[CB] Circuit is OPEN (fail-fast)")
+            acquired = self.bulkhead.semaphore.acquire(
+                timeout=self.bulkhead.acquire_timeout
+            )
+            if not acquired:
+                raise RuntimeError("[BK] Bulkhead limit exceeded")
 
-            while ctx.attempt < self.retry_policy.max_retries:
-                ctx.attempt += 1
-                logger.debug(
-                    f"[RE][{ctx.req_id}] Attempt {ctx.attempt}/"
-                    f"{self.retry_policy.max_retries}"
-                )
-                retry_span = before_retry_attempt(ctx.attempt)
+            try:
+                if self._is_circuit_open():
+                    raise RuntimeError("[CB] Circuit is OPEN (fail-fast)")
 
-                try:
-                    result = self.timeout_executor.execute(func, *args, **kwargs)
-                    self._on_success(ctx)
-                    return result
+                last_exception: Optional[Exception] = None
 
-                except Exception as exc:
-                    self._on_failure(ctx, exc)
-                    span.record_error(exc)
-                    metrics.inc_counter("request_failure_total", tags={
-                        "exception":type(exc).__name__}, )
-                    last_exception = exc
-                    if ctx.attempt >= self.retry_policy.max_retries:
-                        break
-                    time.sleep(self.retry_policy.delay_seconds)
+                for ctx.attempt in range(1, self.retry_policy.max_retries + 1):
+                    logger.debug(
+                        f"[RE][{ctx.req_id}] Attempt {ctx.attempt}/"
+                        f"{self.retry_policy.max_retries}"
+                    )
 
+                    retry_span = before_retry_attempt(ctx.attempt)
 
+                    try:
+                        result = self.timeout_executor.execute(func, *args,
+                                                               **kwargs)
+                        self._on_success(ctx)
+                        return result
 
-                finally:
-                    duration_ms = (time.time() - start_time) * 1000
-                    metrics.observe_latency("request_latency_ms",
-                                            duration_ms,
-                                            tags={"executor":"resilience"},)
-                    after_retry_attempt(retry_span)
-                    if last_exception:
-                        span.record_error(last_exception)
+                    except Exception as exc:
+                        self._on_failure(ctx, exc)
+                        root_span.record_error(exc)
+                        metrics.inc_counter(
+                            "request_failure_total",
+                            tags={"exception":type(exc).__name__},
+                        )
+                        last_exception = exc
 
-                    span.end()
-                    current_span.reset(span_token)
-                    current_trace_id.reset(trace_token)
-                    
-                if last_exception:
-                    raise last_exception
+                        if ctx.attempt == self.retry_policy.max_retries:
+                            break
+
+                        time.sleep(self.retry_policy.delay_seconds)
+
+                    finally:
+                        after_retry_attempt(retry_span)
+
+                # retries exhausted
+                raise last_exception or RuntimeError("[RE] Execution failed")
+
+            finally:
+                self.bulkhead.semaphore.release()
 
         finally:
-            self.bulkhead.semaphore.release()
-
-        raise RuntimeError("[RE] Execution failed after retries")
+            duration_ms = (time.time() - start_time) * 1000
+            metrics.observe_latency(
+                "request_latency_ms",
+                duration_ms,
+                tags={"executor":"resilience"},
+            )
+            root_span.end()
+            current_span.reset(span_token)
+            current_trace_id.reset(trace_token)
 
     def _is_circuit_open(self) -> bool:
         if self.cb_state.state != "OPEN":

@@ -14,19 +14,21 @@ def unstable_service() -> str:
     """
     fn that simulates an unstable downstream service
     """
-    time.sleep(2)  # simulate slow dependency
-
     span = current_span.get()
-    if span:
-       span.annotate("downstream", "called_external_service")
-
-    if random() <= 0.6:
-        raise RuntimeError("Downstream failure")
-
-
-
-    return "DOWNSTREAM OK"
-
-
+    try:
+        time.sleep(2)  # simulate slow dependency
+        
+        if random() <= 0.6:
+            raise RuntimeError("Downstream failure")
+        
+        if span:
+           span.annotate("downstream", "SUCCESS")
+        return "DOWNSTREAM OK"
+    
+    except Exception as e:
+        if span:
+            span.annotate("ERROR", str(e))
+        raise
+    
 if __name__ == "__main__":
     app.run(debug=True, port=5001, host="0.0.0.0")
