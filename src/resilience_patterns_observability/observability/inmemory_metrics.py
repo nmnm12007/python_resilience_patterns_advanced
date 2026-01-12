@@ -21,7 +21,7 @@ class InMemoryMetricsCollector(MetricsCollector):
         self._lock = threading.Lock()
         self._counters: Dict[Tuple[str, frozenset], int] = defaultdict(int)
         self._latencies: Dict[
-            Tuple[str, frozenset], list[float]] = defaultdict(float)
+            Tuple[str, frozenset], list[float]] = defaultdict(list)
         self._gauges: Dict[Tuple[str, frozenset], float] = {}
 
     def _key(self, name: str, tags: Optional[Dict[str, str]]) -> Tuple[str,
@@ -36,7 +36,7 @@ class InMemoryMetricsCollector(MetricsCollector):
     ) -> None:
         key = self._key(name, tags)
         with self._lock:
-            self._counters[key] += value
+            self._counters[key] = self._counters.get(key, 0) + value
 
         logger.info(
             "METRIC counter=%s value=%s tags=%s",
