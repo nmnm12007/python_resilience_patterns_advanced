@@ -4,34 +4,38 @@ define retry policy
 @param: delay_seconds: int
 @return:
 """
+from typing import Any
+
 from resilience_patterns_observability.observability.context import \
     current_span
 from resilience_patterns_observability.observability.inmemory_tracing import \
     InMemoryTraceSpan
 
-def before_retry_attempt(attempt:int):
+
+def before_retry_attempt(attempt: int) -> Any:
     """
 
     :param attempt:
     :return:
     """
-    parent:current_span = current_span.get()
+    parent: current_span = current_span.get()
     if not parent:
         return None
 
-    span_retry:current_span = InMemoryTraceSpan(
+    span_retry: current_span = InMemoryTraceSpan(
         name=f"retry.attempt.{attempt}",
         trace_id=parent.trace_id,
-        parent_span_id=parent.span_id,)
+        parent_span_id=parent.span_id, )
     span_retry.start()
     return span_retry
 
-def after_retry_attempt(span:current_span):
+
+def after_retry_attempt(span: current_span) -> None:
+    """
+    :param span:
+    """
     if span:
         span.end()
-
-        
-
 
 
 class RetryPolicy:

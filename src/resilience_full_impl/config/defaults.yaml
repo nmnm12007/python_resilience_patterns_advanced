@@ -1,0 +1,10 @@
+
+
+resilience:
+  retry:
+    max_attempts: 3
+    retry_interval_ms: 5
+    exponential: true
+
+  timeout:
+    timeout_seconds: 5

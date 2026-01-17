@@ -123,7 +123,7 @@ class ResilienceExecutor:
             metrics.observe_latency(
                 "request_latency_ms",
                 duration_ms,
-                tags={"executor":"resilience"},
+                tags={"executor":"resilience_full_impl"},
             )
             root_span.end()
             current_span.reset(span_token)
