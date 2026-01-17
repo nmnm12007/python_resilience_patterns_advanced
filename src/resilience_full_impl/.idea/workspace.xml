@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="05f8c9e8-9eef-4c02-9c95-2580cff424b7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/defaults.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/loader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/schema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/executor/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/executor/cb_state.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/executor/resilience_executor.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/policy/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/policy/bulkhead_policy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/policy/cb_policy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/policy/retry_policy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/policy/timeout_policy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../resilience_patterns_observability/.idea/resilience_patterns_observability.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../resilience_patterns_observability/observability/failure_translator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../resilience_patterns_observability/policies/failure_type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resilience_patterns_observability/core/resilience_executor.py" beforeDir="false" afterPath="$PROJECT_DIR$/../resilience_patterns_observability/core/resilience_executor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resilience_patterns_observability/observability/inmemory_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/../resilience_patterns_observability/policies/inmemory_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resilience_patterns_observability/observability/runtime.py" beforeDir="false" afterPath="$PROJECT_DIR$/../resilience_patterns_observability/observability/runtime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resilience_patterns_observability/policies/retry_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/../resilience_patterns_observability/policies/retry_policy.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "nmnm12007"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/nmnm12007/python_resilience_patterns_advanced.git",
+    "accountId": "7ac2b576-3cde-4640-8704-6a0b80392681"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="38C5a9ptKYLwcMUXWEVlO10UoeE" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced/src/resilience_full_impl"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="05f8c9e8-9eef-4c02-9c95-2580cff424b7" name="Changes" comment="" />
+      <created>1768290772904</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1768290772904</updated>
+    </task>
+    <servers />
+  </component>
+</project>
