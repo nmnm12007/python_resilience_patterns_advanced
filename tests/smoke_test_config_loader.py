@@ -1,12 +1,12 @@
-from resilience_full_impl.config.loader import ResilienceConfigLoader
 from pathlib import Path
 
+from resilience_full_impl.config.loader import ResilienceConfigLoader
 
-def main():
+
+def main() -> None:
     loader = ResilienceConfigLoader()
     project_root = Path(__file__).resolve().parents[1]
-    config_path = (project_root / "src" / "resilience_full_impl" / "config" /
-                   "defaults.yaml")
+    config_path = project_root / "src" / "resilience_full_impl" / "config" / "defaults.yaml"
     policies = loader.load_config(str(config_path))
 
     retry_policy = policies["retry"]

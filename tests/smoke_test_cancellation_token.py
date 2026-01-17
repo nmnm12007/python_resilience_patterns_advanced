@@ -4,7 +4,7 @@ from resilience_full_impl.cancellation.cancellation_token import CancellationTok
 from resilience_full_impl.cancellation.exceptions import CancelledException
 
 
-def test_deadline_cancellation():
+def test_deadline_cancellation() -> None:
     token = CancellationToken(deadline_seconds=1)
 
     time.sleep(1.5)
@@ -16,7 +16,7 @@ def test_deadline_cancellation():
         print("✅ Deadline cancellation works")
 
 
-def test_explicit_cancellation():
+def test_explicit_cancellation() -> None:
     token = CancellationToken()
 
     token.cancel()
