@@ -8,12 +8,20 @@ from typing import TypeVar, Callable
 from resilience_full_impl.cancellation.cancellation_token import \
     CancellationToken
 from resilience_full_impl.cancellation.exceptions import CancelledException
+from resilience_full_impl.executor.bulkhead import Bulkhead
 from resilience_full_impl.executor.circuit_breaker import CircuitBreaker
 from resilience_full_impl.executor.execution_context import \
     ExecutionContext
+from resilience_full_impl.observability.metrics import MetricsCollector
+from resilience_full_impl.observability.tracing import start_span
 from resilience_full_impl.policy.cb_policy import CircuitBreakerPolicy
 from resilience_full_impl.policy.retry_policy import RetryPolicy
 from resilience_full_impl.policy.timeout_policy import TimeoutPolicy
+from resilience_full_impl.executor.circuit_breaker import \
+                CircuitBreakerException
+
+from resilience_full_impl.policy.bulkhead_policy import BulkheadPolicy
+
 
 T = TypeVar("T")
 
@@ -31,9 +39,14 @@ class ResilienceExecutor:
     """
 
     def __init__(self, retry_policy: RetryPolicy,
-                 cb_policy: CircuitBreakerPolicy, ):
+                 cb_policy: CircuitBreakerPolicy,
+                 bulk_head_policy: BulkheadPolicy ):
         self._retry_policy = retry_policy
         self._cb_obj = CircuitBreaker(cb_pol_obj=cb_policy)
+        self._metrics = MetricsCollector()
+        self._bulkhead = Bulkhead(bulkhead_pol=bulk_head_policy,
+                                  metrics=self._metrics)
+        
 
     def _sleep_before_next_attempt(self, attempt: int) -> None:
         delay_ms = self._retry_policy.retry_interval_ms
@@ -45,9 +58,11 @@ class ResilienceExecutor:
 
     def execute(self,
                 func: Callable[[CancellationToken], T],
-                timeout_policy: TimeoutPolicy, ) -> T:
+                timeout_policy: TimeoutPolicy,
+                dependency_name: str) -> T:
         """
 
+        :param dependency_name:
         :param func:
         :param timeout_policy:
         :return:
@@ -56,15 +71,23 @@ class ResilienceExecutor:
         token = CancellationToken(
             deadline_seconds=timeout_policy.timeout_seconds)
 
-        ctx = ExecutionContext(retry_pol=self._retry_policy,
-                               timeout_pol=timeout_policy,
-                               token=token,
-                               cb=self._cb_obj)
+        with start_span("request", dependency=dependency_name):
+            self._bulkhead.acquire(dependency_name)
 
-        return self._execute_with_retry(func, ctx)
+            try:
 
+                ctx = ExecutionContext(retry_pol=self._retry_policy,
+                                       timeout_pol=timeout_policy,
+                                       token=token,
+                                       cb=self._cb_obj)
+
+                return self._execute_with_retry(func, ctx, dependency_name)
+            finally:
+                self._bulkhead.release()
+                
     def _execute_with_retry(self, func: Callable[[CancellationToken], T],
-                            ctx: ExecutionContext
+                            ctx: ExecutionContext,
+                            dependency_name: str
                             ) -> T:
         """
 
@@ -74,18 +97,25 @@ class ResilienceExecutor:
         last_exception = None
 
         for attempt in range(1, self._retry_policy.max_attempts + 1):
-            ctx.token.throw_if_cancelled()
-            ctx.cb.before_execution()
+            with start_span("retry_attempt", attempt=attempt) as span:
+                self._metrics.increment(
+                    "retry_attempts_total",
+                    tags={"Dependency":dependency_name}
+                )
 
-            from resilience_full_impl.executor.circuit_breaker import \
-                CircuitBreakerException
+            ctx.token.throw_if_cancelled()
+
+            with start_span("circuit_breaker_check"):
+                ctx.cb.before_execution()
+
+
             try:
                 result_success = self._execute_with_timeout(func, ctx)
                 ctx.cb.after_success()
                 return result_success
 
             except (CircuitBreakerException, CancelledException,) as e:
-                raise  # what is the order of exceptions
+                raise
 
             except Exception as e:
                 last_exception = e
@@ -105,31 +135,36 @@ class ResilienceExecutor:
         :param ctx:
         :return:
         """
-        result_container = {}
-        exception_container = {}
 
-        def target():
-            """
-                 Target method for executing function
-            """
-            try:
-                result_container["result"] = func(ctx.token)
-            except Exception as e:
-                exception_container["exception"] = e
+        with start_span("timeout_execution",
+                        timeout_seconds=ctx.timeout_pol.timeout_seconds,
+                        ):
 
-        thread = threading.Thread(target=target, daemon=True)
-        thread.start()
-        thread.join(timeout=ctx.timeout_pol.timeout_seconds)
-        if thread.is_alive():
-            ctx.token.cancel()
-            raise TimeoutException(f"Timed out after "
-                                   f"{ctx.timeout_pol.timeout_seconds} "
-                                   f"seconds")
+            result_container = {}
+            exception_container = {}
 
-        if "exception" in exception_container:
-            raise exception_container["exception"]
+            def target():
+                """
+                     Target method for executing function
+                """
+                try:
+                    result_container["result"] = func(ctx.token)
+                except Exception as e:
+                    exception_container["exception"] = e
 
-        return result_container.get("result")
+            thread = threading.Thread(target=target, daemon=True)
+            thread.start()
+            thread.join(timeout=ctx.timeout_pol.timeout_seconds)
+            if thread.is_alive():
+                ctx.token.cancel()
+                raise TimeoutException(f"Timed out after "
+                                       f"{ctx.timeout_pol.timeout_seconds} "
+                                       f"seconds")
+
+            if "exception" in exception_container:
+                raise exception_container["exception"]
+
+            return result_container.get("result")
 
     def _validate_policies(self, retry_policy: RetryPolicy,
                            timeout_policy: TimeoutPolicy) -> None:

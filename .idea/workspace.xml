@@ -5,14 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5bba5ca6-6a9a-4ca9-b503-0bc85bbfd7c0" name="Changes" comment="Resilience Pattern Advanced - implementation_version1.2__Step-4E - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts">
+      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/executor/bulkhead.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/feedback.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/logging.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/tracing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_bulkhead.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/slow_func.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/smoke_test_cancellation_token.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/smoke_test_cancellation_token.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/smoke_test_config_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/smoke_test_config_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_cb.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_retry.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_retry_timeout_cancellation.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_retry_timeout_cancellation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_full_impl/executor/circuit_breaker.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_full_impl/executor/circuit_breaker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_full_impl/executor/resilience_executor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_full_impl/executor/resilience_executor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resilience_full_impl/policy/bulkhead_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_full_impl/policy/bulkhead_policy.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,38 +52,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python tests.Python tests in smoke_test_cancellation_token.py.executor": "Run",
-    "Python tests.Python tests in test_cb.py.executor": "Run",
-    "Python tests.Python tests in test_retry.py.executor": "Run",
-    "Python tests.Python tests in test_retry_timeout_cancellation.py.executor": "Run",
-    "Python.slow_func.executor": "Run",
-    "Python.smoke_test_config_loader.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in smoke_test_cancellation_token.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_bulkhead.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_cb.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_retry.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_retry_timeout_cancellation.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.slow_func.executor&quot;: &quot;Run&quot;,
+    &quot;Python.smoke_test_config_loader.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\edghklt\OneDrive - Ericsson\NM Personal Reference Downloads\Learn\code_folder\Best_Practice_Plan\python_resilience_patterns_advanced\src\resilience\executor" />
       <recent name="C:\Users\edghklt\OneDrive - Ericsson\NM Personal Reference Downloads\Learn\code_folder\Best_Practice_Plan\python_resilience_patterns_advanced\src\resilience_patterns_observability\policies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in test_cb.py">
+  <component name="RunManager" selected="Python.smoke_test_config_loader">
     <configuration name="smoke_test_config_loader" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="python_resilience_patterns_advanced" />
       <option name="ENV_FILES" value="" />
@@ -104,6 +113,22 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests in C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced/tests/test_cb.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="python_resilience_patterns_advanced" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_cb.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests in smoke_test_cancellation_token.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="python_resilience_patterns_advanced" />
       <option name="ENV_FILES" value="" />
@@ -120,7 +145,7 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_cb.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in test_bulkhead.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="python_resilience_patterns_advanced" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -132,7 +157,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="RUN_TOOL" value="" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_cb.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_bulkhead.py&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
@@ -154,7 +179,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests in test_cb.py" />
+        <item itemvalue="Python tests.Python tests in test_bulkhead.py" />
+        <item itemvalue="Python tests.Python tests in C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced/tests/test_cb.py" />
         <item itemvalue="Python tests.Python tests in test_retry_timeout_cancellation.py" />
         <item itemvalue="Python tests.Python tests in smoke_test_cancellation_token.py" />
         <item itemvalue="Python.smoke_test_config_loader" />
@@ -234,7 +260,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768654416257</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Resilience Pattern Advanced - implementation_version1.2__Step-4E - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts">
+      <option name="closed" value="true" />
+      <created>1768670441609</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1768670441609</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

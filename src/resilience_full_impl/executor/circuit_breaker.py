@@ -2,6 +2,7 @@ import threading
 import time
 
 from resilience_full_impl.cancellation.exceptions import CancelledException
+from resilience_full_impl.observability.logging import logger
 from resilience_full_impl.policy.cb_policy import CircuitBreakerPolicy
 
 
@@ -21,7 +22,7 @@ class CircuitBreaker:
     OPEN = "OPEN"
     HALF_OPEN = "HALF_OPEN"
 
-    def __init__(self, cb_pol_obj:CircuitBreakerPolicy):
+    def __init__(self, cb_pol_obj: CircuitBreakerPolicy):
         self._cb_pol_obj = cb_pol_obj
         self._state = self.CLOSED
         self._failure_count = 0
@@ -65,4 +66,8 @@ class CircuitBreaker:
             self._last_failure_time = time.time()
 
             if self._failure_count >= self._cb_pol_obj.failure_threshold:
+                if self._state != self.OPEN:
+                    logger.warning(
+                        "[CB]: Circuit Breaker State Changed: OLD -> CLOSED "
+                        "|| NEW -> OPEN")
                 self._state = self.OPEN
