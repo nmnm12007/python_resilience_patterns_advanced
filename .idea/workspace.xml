@@ -4,18 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bba5ca6-6a9a-4ca9-b503-0bc85bbfd7c0" name="Changes" comment="Resilience Pattern Advanced - implementation_version1.2__Step-4E - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts">
-      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/executor/bulkhead.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/feedback.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/logging.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/metrics.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resilience_full_impl/observability/tracing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_bulkhead.py" afterDir="false" />
+    <list default="true" id="5bba5ca6-6a9a-4ca9-b503-0bc85bbfd7c0" name="Changes" comment="Learning_Exercises_Python">
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/Frequency_Integers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/Total_Spend.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/first_non_repeating_char.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/remove_duplicates_list.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/reverse_words.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/safe_divide.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/service_violating_sla.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resilience_full_impl/executor/circuit_breaker.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_full_impl/executor/circuit_breaker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resilience_full_impl/executor/resilience_executor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_full_impl/executor/resilience_executor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resilience_full_impl/policy/bulkhead_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/resilience_full_impl/policy/bulkhead_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/learn_python_coding_exercises/count_vowels.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/learn_python_coding_exercises/count_vowels.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +29,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="SYNC" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -52,44 +51,56 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python tests.Python tests in smoke_test_cancellation_token.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_bulkhead.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_cb.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_retry.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_retry_timeout_cancellation.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.slow_func.executor&quot;: &quot;Run&quot;,
-    &quot;Python.smoke_test_config_loader.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python tests.Python tests in smoke_test_cancellation_token.py.executor": "Run",
+    "Python tests.Python tests in test_bulkhead.py.executor": "Run",
+    "Python tests.Python tests in test_cb.py.executor": "Run",
+    "Python tests.Python tests in test_retry.py.executor": "Run",
+    "Python tests.Python tests in test_retry_timeout_cancellation.py.executor": "Run",
+    "Python.Frequency_Integers.executor": "Run",
+    "Python.Total_Spend.executor": "Run",
+    "Python.count_vowels.executor": "Run",
+    "Python.first_non_repeating_char.executor": "Run",
+    "Python.remove_duplicates_list.executor": "Run",
+    "Python.safe_divide.executor": "Run",
+    "Python.scratch_1.executor": "Run",
+    "Python.service_violating_sla.executor": "Run",
+    "Python.slow_func.executor": "Run",
+    "Python.smoke_test_config_loader.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/edghklt/OneDrive - Ericsson/NM Personal Reference Downloads/Learn/code_folder/Best_Practice_Plan/python_resilience_patterns_advanced",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;Python&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "Python"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\edghklt\OneDrive - Ericsson\NM Personal Reference Downloads\Learn\code_folder\Best_Practice_Plan\python_resilience_patterns_advanced" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\edghklt\OneDrive - Ericsson\NM Personal Reference Downloads\Learn\code_folder\Best_Practice_Plan\python_resilience_patterns_advanced\src\learn_python_coding_exercises" />
       <recent name="C:\Users\edghklt\OneDrive - Ericsson\NM Personal Reference Downloads\Learn\code_folder\Best_Practice_Plan\python_resilience_patterns_advanced\src\resilience\executor" />
       <recent name="C:\Users\edghklt\OneDrive - Ericsson\NM Personal Reference Downloads\Learn\code_folder\Best_Practice_Plan\python_resilience_patterns_advanced\src\resilience_patterns_observability\policies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.smoke_test_config_loader">
+  <component name="RunManager">
     <configuration name="smoke_test_config_loader" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="python_resilience_patterns_advanced" />
       <option name="ENV_FILES" value="" />
@@ -268,7 +279,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768670441609</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Resilience Pattern Advanced - implementation_version1.2__Step-4F - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts">
+      <option name="closed" value="true" />
+      <created>1769585125794</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1769585125794</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Learning_Exercises_Python">
+      <option name="closed" value="true" />
+      <created>1769585146402</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1769585146402</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -292,6 +319,8 @@
     <MESSAGE value="Resilience Pattern Advanced - implementation_version1.2__Step-4A _Observability foundation + Instrumented Resilience.md" />
     <MESSAGE value="Resilience Pattern Advanced - implementation_version1.2__Step-4B - 4D _Observability foundation + Instrumented Resilience.md" />
     <MESSAGE value="Resilience Pattern Advanced - implementation_version1.2__Step-4E - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts" />
-    <option name="LAST_COMMIT_MESSAGE" value="Resilience Pattern Advanced - implementation_version1.2__Step-4E - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts" />
+    <MESSAGE value="Resilience Pattern Advanced - implementation_version1.2__Step-4F - full code - CB-Retry-Timeout with ExecutionContext+ResilienceExecutor-&#10;Concepts" />
+    <MESSAGE value="Learning_Exercises_Python" />
+    <option name="LAST_COMMIT_MESSAGE" value="Learning_Exercises_Python" />
   </component>
 </project>
